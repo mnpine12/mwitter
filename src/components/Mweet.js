@@ -1,6 +1,6 @@
-import { async } from "@firebase/util";
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import React, { useState } from "react";
 
 const Mweet = ({ mweetObj, isOwner }) => {
@@ -13,6 +13,7 @@ const Mweet = ({ mweetObj, isOwner }) => {
     if (ok) {
       //delete mweet
       await deleteDoc(doc(dbService, "mweets", `${mweetObj.id}`));
+      await deleteObject(ref(storageService, mweetObj.attchmentURL));
     }
   };
 
@@ -49,6 +50,9 @@ const Mweet = ({ mweetObj, isOwner }) => {
       ) : (
         <>
           <h4>{mweetObj.text}</h4>
+          {mweetObj.attchmentURL && (
+            <img src={mweetObj.attchmentURL} width="50px" height="50px" />
+          )}
           {isOwner && (
             <>
               <button onClick={onDeleteClick}>Delete Mweet</button>
